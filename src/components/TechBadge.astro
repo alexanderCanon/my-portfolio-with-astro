@@ -1,0 +1,51 @@
+---
+interface Props {
+  name: string;
+  variant?: 'solid' | 'outline';
+}
+
+const { name, variant = 'outline' } = Astro.props;
+---
+
+<span class={`tech-badge ${variant}`}>
+  {name}
+</span>
+
+<style>
+  .tech-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 4px;
+    white-space: nowrap;
+    transition: all var(--transition-fast);
+  }
+
+  /* Solid variant (en producción) - Subtle dark cyan glow */
+  .tech-badge.solid {
+    background-color: rgba(79, 179, 196, 0.08);
+    border: 1px solid var(--accent-dim);
+    color: var(--accent);
+  }
+  
+  .tech-badge.solid:hover {
+    background-color: rgba(79, 179, 196, 0.15);
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(79, 179, 196, 0.1);
+  }
+
+  /* Outline variant (en estudio) - Discrete dark gray */
+  .tech-badge.outline {
+    background-color: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  .tech-badge.outline:hover {
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+  }
+</style>

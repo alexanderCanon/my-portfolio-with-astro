@@ -1,0 +1,71 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer-container">
+    <div class="footer-left">
+      <p class="copyright font-mono">&copy; {currentYear} Alexander Canon.</p>
+    </div>
+    
+    <nav class="footer-nav" aria-label="Navegación del pie de página">
+      <a href="/#proyectos">Proyectos</a>
+      <a href="/#stack">Stack</a>
+      <a href="/#contacto">Contacto</a>
+      <a href="https://github.com/alexandercanon" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://linkedin.com/in/alexcanon64" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: auto;
+    border-top: 1px solid var(--border-subtle);
+    background-color: var(--bg-base);
+    padding: 3rem 0;
+  }
+
+  .footer-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .copyright {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .footer-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-nav a {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    transition: color var(--transition-fast);
+  }
+
+  .footer-nav a:hover {
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 640px) {
+    .footer-container {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .footer-nav {
+      justify-content: center;
+      gap: 1rem;
+    }
+  }
+</style>

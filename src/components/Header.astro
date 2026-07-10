@@ -1,0 +1,75 @@
+---
+import { Image } from 'astro:assets';
+import logoImage from '../assets/alexaversion-complete.svg';
+---
+
+<header class="header">
+  <div class="container header-container">
+    <a href="/" class="logo" aria-label="Alexander Canon Inicio">
+      <Image src={logoImage} alt="Alexander Canon" class="logo-img" height={38} loading="eager" />
+    </a>
+    
+    <nav class="nav" aria-label="Navegación principal">
+      <a href="/#proyectos" class="nav-link">Proyectos</a>
+      <a href="/#stack" class="nav-link">Stack</a>
+      <a href="/#contacto" class="nav-link">Contacto</a>
+    </nav>
+
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    background-color: rgba(13, 13, 15, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .header-container {
+    height: 4.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo-img {
+    display: block;
+    height: 2.375rem; /* 38px */
+    width: auto;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .nav-link {
+    font-size: var(--fs-small);
+    color: var(--text-secondary);
+    font-weight: 500;
+    transition: color var(--transition-fast);
+  }
+
+  .nav-link:hover {
+    color: var(--text-primary);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 640px) {
+    .nav {
+      gap: 1rem;
+    }
+  }
+</style>

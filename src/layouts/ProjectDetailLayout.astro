@@ -1,0 +1,369 @@
+---
+import Layout from './Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import TechBadge from '../components/TechBadge.astro';
+
+interface Props {
+  title: string;
+  tag: string;
+  role: string;
+  stack: string[];
+  highlights: string[];
+  githubUrl?: string | null;
+  liveUrl?: string | null;
+  slug: string;
+  diagramMermaid?: string | null;
+}
+
+const { title, tag, role, stack, highlights, githubUrl, liveUrl, slug, diagramMermaid } = Astro.props;
+---
+
+<Layout title={`${title} | Alexander Canon`} description={`Detalle del proyecto ${title}. ${role}. Stack: ${stack.join(', ')}`}>
+  <Header />
+  
+  <main class="project-detail-main container">
+    <div class="back-navigation">
+      <a href="/#proyectos" class="btn-back">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Volver a proyectos
+      </a>
+    </div>
+
+    <article class="project-article">
+      <header class="project-header">
+        <span class="project-eyebrow font-mono">{tag}</span>
+        <h1 class="project-title">{title}</h1>
+        <p class="project-role font-mono">Rol: {role}</p>
+        
+        <div class="project-stack">
+          {stack.map((tech) => (
+            <TechBadge name={tech} variant="solid" />
+          ))}
+        </div>
+      </header>
+
+      <div class="project-body">
+        <section class="project-section">
+          <h3 class="section-title font-mono">Contexto y Problema</h3>
+          <div class="context-content">
+            <slot />
+          </div>
+        </section>
+
+        <section class="project-section">
+          <h3 class="section-title font-mono">Logros y Destacados</h3>
+          <ul class="highlights-list">
+            {highlights.map((highlight) => (
+              <li>
+                <span class="bullet-accent">&gt;</span>
+                <span class="highlight-text">{highlight}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section class="project-section">
+          <h3 class="section-title font-mono">Diagrama de Arquitectura</h3>
+          <div class="diagram-container">
+            <a href={`/images/proyectos/${slug}-diagram.svg`} target="_blank" rel="noopener noreferrer" class="diagram-zoom-link" title="Abrir diagrama en pestaña nueva para hacer zoom">
+              <img 
+                src={`/images/proyectos/${slug}-diagram.svg`} 
+                alt={`Esquema técnico / Diagrama de arquitectura de ${title}`} 
+                class="diagram-image"
+                loading="lazy"
+              />
+              <div class="diagram-overlay">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                <span class="font-mono">Click para ampliar</span>
+              </div>
+            </a>
+          </div>
+        </section>
+      </div>
+
+      <footer class="project-footer-links">
+        {githubUrl && (
+          <a href={githubUrl} target="_blank" rel="noopener noreferrer" class="btn-project-link github">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+            Código en GitHub
+          </a>
+        )}
+        {liveUrl && (
+          <a href={liveUrl} target="_blank" rel="noopener noreferrer" class="btn-project-link live">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            Ver demo en vivo
+          </a>
+        )}
+      </footer>
+    </article>
+  </main>
+
+  <Footer />
+
+
+</Layout>
+
+<style>
+  .diagram-container {
+    position: relative;
+    width: 100%;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    padding: 1.5rem;
+  }
+
+  .diagram-zoom-link {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: zoom-in;
+  }
+
+  .diagram-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    transition: transform var(--transition-normal);
+  }
+
+  .diagram-zoom-link:hover .diagram-image {
+    transform: scale(1.01);
+  }
+
+  .diagram-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(13, 13, 15, 0.65);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    opacity: 0;
+    color: var(--text-primary);
+    transition: opacity var(--transition-fast);
+  }
+
+  .diagram-zoom-link:hover .diagram-overlay {
+    opacity: 1;
+  }
+
+  .project-detail-main {
+    padding-top: 3rem;
+    padding-bottom: 6rem;
+  }
+
+  .back-navigation {
+    margin-bottom: 3rem;
+  }
+
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+    color: var(--text-secondary);
+    transition: color var(--transition-fast);
+  }
+
+  .btn-back:hover {
+    color: var(--text-primary);
+  }
+
+  .btn-back svg {
+    transition: transform var(--transition-fast);
+  }
+
+  .btn-back:hover svg {
+    transform: translateX(-4px);
+  }
+
+  .project-article {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .project-header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .project-eyebrow {
+    font-size: 0.8125rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .project-title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .project-role {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .project-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .project-body {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+    margin-bottom: 4rem;
+  }
+
+  .project-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .section-title {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 0.5rem;
+  }
+
+  .context-content {
+    font-size: var(--fs-body);
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .highlights-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .highlights-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .bullet-accent {
+    font-family: var(--font-mono);
+    color: var(--accent);
+    user-select: none;
+    font-weight: bold;
+  }
+
+  .highlight-text {
+    font-size: var(--fs-body);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .diagram-container {
+    border: 1px solid var(--border);
+    background-color: var(--bg-surface);
+    border-radius: 6px;
+    position: relative;
+    aspect-ratio: 16/9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .diagram-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 2;
+  }
+
+  /* Display placeholder behind or if image fails to load */
+  .diagram-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    z-index: 1;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .project-footer-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    border-top: 1px solid var(--border);
+    padding-top: 3rem;
+  }
+
+  .btn-project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    padding: 0.75rem 1.25rem;
+    border-radius: 4px;
+    transition: all var(--transition-fast);
+  }
+
+  .btn-project-link.github {
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+  }
+
+  .btn-project-link.github:hover {
+    background-color: var(--bg-surface-hover);
+    border-color: var(--text-secondary);
+  }
+
+  .btn-project-link.live {
+    background-color: var(--accent);
+    color: var(--accent-text-on);
+    font-weight: 600;
+  }
+
+  .btn-project-link.live:hover {
+    background-color: #5ec5d6;
+  }
+
+  @media (max-width: 640px) {
+    .project-footer-links {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+    }
+
+    .btn-project-link {
+      justify-content: center;
+    }
+  }
+</style>

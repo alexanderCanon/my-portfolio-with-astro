@@ -1,0 +1,196 @@
+---
+import { Image } from 'astro:assets';
+import profileImage from '../assets/just-me.png';
+import SocialLinks from './SocialLinks.astro';
+---
+
+<section class="hero-section">
+  <div class="hero-content">
+    <div class="hero-header">
+      <div class="avatar-container">
+        <Image src={profileImage} alt="Alexander Canon" class="avatar-img" width={72} height={72} loading="eager" />
+      </div>
+      <div class="hero-info"> 
+        <h1 class="hero-title">Alexander Canon</h1>
+        <p class="font-mono">Software & Cloud Infrastructure Engineer</p>
+      </div>
+    </div>
+    
+    <p class="positioning-statement">
+      Estudiante de Ingeniería en Sistemas, con enfoque en el desarrollo de software, administración de sistemas Linux, automatización de flujos CI/CD y despliegue de infraestructura segura y resiliente en la nube.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#proyectos" class="btn-primary">
+        Ver proyectos
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+      </a>
+      <a href="/cv.pdf" class="btn-secondary" download="Alexander_Canon_CV.pdf">
+        Descargar CV
+      </a>
+      <div class="divider"></div>
+      <SocialLinks />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    padding: 8rem 0 6rem 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .hero-content {
+    max-width: 720px;
+  }
+
+  .hero-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .avatar-container {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background-color: var(--bg-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(79, 179, 196, 0.05);
+    overflow: hidden;
+  }
+
+  .avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .avatar-fallback {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .hero-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .role-badge {
+    font-size: var(--fs-small);
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 5.5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+  }
+
+  .positioning-statement {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 3rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--accent);
+    color: var(--accent-text-on);
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 4px;
+    transition: all var(--transition-fast);
+  }
+
+  .btn-primary:hover {
+    background-color: #5ec5d6;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(79, 179, 196, 0.2);
+  }
+
+  .btn-primary svg {
+    transition: transform var(--transition-fast);
+  }
+
+  .btn-primary:hover svg {
+    transform: translateY(2px);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    font-weight: 500;
+    font-size: 0.875rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 4px;
+    transition: all var(--transition-fast);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--bg-surface);
+    border-color: var(--text-secondary);
+  }
+
+  .divider {
+    width: 1px;
+    height: 24px;
+    background-color: var(--border);
+  }
+
+  @media (max-width: 640px) {
+    .hero-section {
+      padding: 5rem 0 4rem 0;
+    }
+    
+    .hero-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .hero-actions {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    .btn-primary, .btn-secondary {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      margin: 0.5rem 0;
+    }
+  }
+</style>

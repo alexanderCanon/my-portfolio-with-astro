@@ -1,11 +1,341 @@
 ---
-import Welcome from '../components/Welcome.astro';
+import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import TechBadge from '../components/TechBadge.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Footer from '../components/Footer.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// Fetch and sort projects
+const projects = await getCollection('projects');
+const sortedProjects = projects.sort((a, b) => a.data.order - b.data.order);
+
+// Tech lists
+const productionTech = [
+  "Java", "Spring Boot", "Angular", "Docker", "CI/CD (GitHub Actions)", 
+  "AWS", "PostgreSQL", "RabbitMQ", "Grafana Cloud", "Tailscale", 
+  "Python", "C++"
+];
+
+const studyingTech = [
+  "Kubernetes", "Terraform", "RabbitMQ", "Redis", "MongoDB", "GraphQL", 
+  "Event Sourcing/CQRS", "Saga Pattern", "Circuit Breaker", "OAuth2/OIDC", 
+  "Testcontainers", "Rust"
+];
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Alexander Canon | Software & Cloud Infrastructure Engineer">
+  <Header />
+  
+  <main class="container">
+    <!-- Hero Section -->
+    <Hero />
+
+    <!-- Sobre Mí Section (Integrated as a concise professional profile segment) -->
+    <section class="section about-section" id="sobre-mi">
+      <div class="about-grid">
+        <div class="about-label font-mono">
+          <span>Acerca de mí</span>
+        </div>
+        <div class="about-content">
+          <p>
+            Inicié mi trayectoria con enfoque en desarrollar software backend con Java y Spring Boot, pero mi rol ha evolucionado naturalmente hacia la administración de sistemas Linux, la automatización de flujos CI/CD con GitHub Actions, el diseño de infraestructura segura en la nube y la ciberseguridad. Me gusta aprender sobre gestión y optimización de entornos virtuales y de contenedores aplicando los mejores estándares técnicos.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Proyectos Section -->
+    <section class="section projects-section" id="proyectos">
+      <SectionHeading eyebrow="01. PROYECTOS" title="Proyectos y Casos de Estudio" />
+      
+      <div class="projects-grid">
+        {sortedProjects.map((project) => (
+          <ProjectCard 
+            title={project.data.title}
+            tag={project.data.tag}
+            summary={project.data.summary}
+            stack={project.data.stack}
+            slug={project.id}
+          />
+        ))}
+      </div>
+    </section>
+
+    <!-- Stack Section -->
+    <section class="section stack-section" id="stack">
+      <SectionHeading eyebrow="02. STACK" title="Tecnologías & Herramientas" />
+      
+      <div class="stack-grid">
+        <!-- Grupo: En producción -->
+        <div class="stack-group production-group">
+          <div class="group-header">
+            <span class="group-indicator solid"></span>
+            <h3 class="font-mono">EN PRODUCCIÓN</h3>
+          </div>
+          <p class="group-description">Tecnologías e infraestructuras que he desplegado y utilizado en entornos reales o de testing avanzado.</p>
+          <div class="badges-wrapper">
+            {productionTech.map((tech) => (
+              <TechBadge name={tech} variant="solid" />
+            ))}
+          </div>
+        </div>
+
+        <!-- Grupo: En estudio activo -->
+        <div class="stack-group studying-group">
+          <div class="group-header">
+            <span class="group-indicator outline"></span>
+            <h3 class="font-mono">EN ESTUDIO ACTIVO</h3>
+          </div>
+          <p class="group-description">Patrones, arquitecturas y herramientas que investigo activamente para futuros proyectos complejos.</p>
+          <div class="badges-wrapper">
+            {studyingTech.map((tech) => (
+              <TechBadge name={tech} variant="outline" />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contacto Section -->
+    <section class="section contact-section" id="contacto">
+      <div class="contact-box">
+        <span class="contact-eyebrow font-mono">03. CONTACTO</span>
+        <h2 class="contact-title">¿Trabajamos en equipo?</h2>
+        <p class="contact-text">
+          Estoy en disposición para trabajar en proyectos personales, open source o profesionales. Si usted tiene una idea, un proyecto o simplemente necesite intercambiar temas sobre tecnología, noticias recientes de inteligencia artificial será un gusto contactarle.
+        </p>
+        
+        <div class="contact-details font-mono">
+          <div class="detail-item">
+            <span class="label">Email:</span>
+            <a href="mailto:hola@alexandercanon.com" class="value link">hola@alexandercanon.com</a>
+          </div>
+          <div class="detail-item">
+            <span class="label">Ubicación:</span>
+            <span class="value">Guatemala — Remoto</span>
+          </div>
+        </div>
+
+        <div class="contact-actions">
+          <a href="mailto:hola@alexandercanon.com" class="btn-primary-action">
+            Enviar correo
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
 </Layout>
+
+<style>
+  /* About Section Styles */
+  .about-section {
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 4rem 0;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .about-label {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .about-content p {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* Projects Grid */
+  .projects-section {
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Stack Section Styles */
+  .stack-section {
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .stack-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+
+  .stack-group {
+    background-color: rgba(24, 24, 27, 0.4);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 2.5rem;
+    transition: border-color var(--transition-fast);
+  }
+
+  .stack-group:hover {
+    border-color: var(--border);
+  }
+
+  .group-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .group-header h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .group-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .group-indicator.solid {
+    background-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .group-indicator.outline {
+    background-color: transparent;
+    border: 1.5px solid var(--text-muted);
+  }
+
+  .group-description {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+
+  .badges-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+  }
+
+  /* Contact Section Styles */
+  .contact-box {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4rem 3rem;
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .contact-eyebrow {
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .contact-title {
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    letter-spacing: -0.03em;
+  }
+
+  .contact-text {
+    font-size: var(--fs-body);
+    color: var(--text-secondary);
+    max-width: 480px;
+    margin: 0 auto 2.5rem auto;
+    line-height: 1.6;
+  }
+
+  .contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 3rem;
+    font-size: 0.875rem;
+  }
+
+  .detail-item {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .detail-item .label {
+    color: var(--text-muted);
+  }
+
+  .detail-item .value {
+    color: var(--text-primary);
+  }
+
+  .detail-item .value.link {
+    transition: color var(--transition-fast);
+  }
+
+  .detail-item .value.link:hover {
+    color: var(--accent);
+  }
+
+  .btn-primary-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--accent);
+    color: var(--accent-text-on);
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.875rem 1.75rem;
+    border-radius: 4px;
+    transition: all var(--transition-fast);
+  }
+
+  .btn-primary-action:hover {
+    background-color: #5ec5d6;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(79, 179, 196, 0.2);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    .stack-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .stack-group {
+      padding: 1.75rem;
+    }
+
+    .contact-box {
+      padding: 3rem 1.5rem;
+    }
+  }
+</style>

@@ -1,0 +1,144 @@
+---
+import TechBadge from './TechBadge.astro';
+
+interface Props {
+  title: string;
+  tag: string;
+  summary: string;
+  stack: string[];
+  slug: string;
+}
+
+const { title, tag, summary, stack, slug } = Astro.props;
+// Display first 4 technologies in the card to keep it clean
+const limitedStack = stack.slice(0, 4);
+---
+
+<article class="project-card">
+  <div class="card-header">
+    <span class="project-tag font-mono">{tag}</span>
+    <h3 class="project-title">{title}</h3>
+  </div>
+  
+  <p class="project-summary">{summary}</p>
+  
+  <div class="project-stack">
+    {limitedStack.map((tech) => (
+      <TechBadge name={tech} variant="outline" />
+    ))}
+    {stack.length > 4 && <span class="more-tech font-mono">+{stack.length - 4}</span>}
+  </div>
+
+  <div class="card-footer">
+    <a href={`/proyectos/${slug}`} class="detail-link font-mono">
+      Ver detalle 
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+    </a>
+  </div>
+</article>
+
+<style>
+  .project-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background-color: var(--accent);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform var(--transition-normal);
+  }
+
+  .project-card:hover {
+    border-color: rgba(79, 179, 196, 0.3);
+    background-color: var(--bg-surface-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .project-card:hover::before {
+    transform: scaleY(1);
+  }
+
+  .card-header {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .project-tag {
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+
+  .project-title {
+    font-size: 1.35rem;
+    font-weight: 600;
+  }
+
+  .project-summary {
+    font-size: var(--fs-small);
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+  }
+
+  .project-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .more-tech {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding-left: 0.25rem;
+  }
+
+  .card-footer {
+    margin-top: auto;
+  }
+
+  .detail-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.8125rem;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .arrow-icon {
+    transition: transform var(--transition-fast);
+  }
+
+  .detail-link:hover {
+    color: var(--accent);
+  }
+
+  .project-card:hover .arrow-icon {
+    transform: translateX(4px);
+    color: var(--accent);
+  }
+</style>
