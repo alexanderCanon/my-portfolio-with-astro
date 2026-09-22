@@ -1,81 +1,68 @@
 ---
 title: "OrionTicket"
 tag: "Proyecto académico"
-summary: "Plataforma multi-tenant de para la venta de boletos de eventos, diseñada con microservicios y enfocada en alta concurrencia."
-role: "Desarrollador Backend"
-stack: ["Java", "Spring Framework", "RabbitMQ", "Redis", "NoSQL (MongoDB)", "Kubernetes", "PostgreSQL (HA)", "k6", "OpenTelemetry", "Prometheus & Grafana"]
+summary: "Plataforma white-label multi-tenant orientada a eventos, diseñada con arquitectura de microservicios, patrón Transactional Outbox y control de acceso en tiempo real."
+role: "Scrum Master & Backend Developer"
+stack: [
+  "Microservicios",
+  "Spring Boot",
+  "Spring Cloud Gateway",
+  "RabbitMQ",
+  "Transactional Outbox",
+  "Docker Compose",
+  "OpenAPI",
+  "Domain-Driven Design (DDD)",
+  "Architecture Decision Records (ADR)",
+  "Scrum",
+  "VPS"
+]
 highlights: [
-  "Diseñé e implementé la arquitectura de microservicios autónomos utilizando Java 21 y Spring Boot, aislando bases de datos e integrando el patrón CQRS para separar la escritura de la lectura rápida.",
-  "Configuré la comunicación asíncrona basada en eventos de dominio utilizando RabbitMQ, con consumidores idempotentes, reintentos y colas DLQ para garantizar consistencia eventual bajo alta carga.",
-  "Desarrollé el módulo de control de accesos en tiempo real con semántica 'first-scan-wins', aplicando bloqueos y caché en Redis para prevenir fraude y doble validación de códigos QR.",
-  "Orquesté la infraestructura analizando cómo Kubernetes resuelve desafíos críticos de escalamiento horizontal automático, tolerancia a fallos, Service Mesh y balanceo de carga.",
-  "Realicé pruebas de estrés y rendimiento utilizando k6 para simular picos de concurrencia y certificar la resiliencia del clúster de base de datos PostgreSQL en alta disponibilidad."
+  "Fungí como Scrum Master y desarrollador backend, facilitando la organización, planificación y seguimiento del trabajo del equipo bajo Scrum, y registrando decisiones de diseño mediante Architecture Decision Records (ADR).",
+  "Diseñé un mecanismo de validación de boletos mediante códigos QR dinámicos con ventana de validez (TTL de 2 minutos) y estrategia first-scan-wins, garantizando control de acceso en tiempo real y prevención de clonación o fraude.",
+  "Participé en el diseño de una arquitectura de microservicios multi-tenant, modelando el dominio con 9 bounded contexts, 14 agregados y 47 eventos de dominio para coordinar la integración asíncrona entre módulos de negocio.",
+  "Implementé el patrón Transactional Outbox para publicación confiable de eventos hacia RabbitMQ y estructuré APIs REST con OpenAPI generando clientes SDK tipados para desacoplar el consumo interservicios.",
+  "Desplegué el ecosistema completo con Spring Cloud Gateway, RabbitMQ y Docker Compose sobre infraestructura de múltiples VPS, configurando pipelines de CI/CD con GitHub Actions."
 ]
 githubUrl: null
 liveUrl: null
 order: 2
 diagramMermaid: |
   graph TD
-      subgraph Frontends [Capa de Clientes]
-          BP[Buyer Portal - Angular]
-          OP[Organizer Panel - Angular]
-          VA[Validator App - Mobile]
+      subgraph Clients ["📱 Capa de Clientes"]
+          BP["Buyer Portal"]
+          OP["Organizer Panel"]
+          VA["Access Validator App (QR Scan)"]
       end
 
-      GW[API Gateway]
+      GW["🚪 Spring Cloud Gateway\nRuteo dinámico · Inspección perimetral"]
 
-      subgraph Cluster [Ecosistema de Microservicios]
-          subgraph Core [Servicios de Negocio]
-              ID[Identity Service]
-              EM[Event Management]
-              SI[Seating & Inventory]
-              OR[Orders Service]
-              PA[Payments Service]
-              TI[Ticket Issuance]
-              AC[Access Control]
+      subgraph Microservices ["⚙️ Ecosistema de Microservicios (Multi-VPS)"]
+          subgraph Core ["Servicios de Dominio (9 Bounded Contexts)"]
+              ID["Identity Service"]
+              EM["Event Management"]
+              SI["Seating & Inventory"]
+              OR["Orders Service"]
+              TI["Ticket Issuance & Validation\n(Dynamic QR · 2-min TTL · First-Scan-Wins)"]
           end
 
-          subgraph Cross [Servicios Cruzados]
-              NO[Notifications Service]
-              RE[Reporting Service]
+          subgraph Messaging ["Patrón Asíncrono Confiable"]
+              Outbox["📦 Transactional Outbox Table"]
+              Rabbit["🐇 RabbitMQ Message Broker\nInter-service Events"]
           end
 
-          subgraph Databases [Persistencia Independiente]
-              DB_SQL[(PostgreSQL por Servicio)]
-              DB_NOSQL[(MongoDB - Proyecciones NoSQL)]
-              Redis[(Redis - Locks & Caché)]
+          subgraph Persistence ["🗄️ Persistencia Independiente"]
+              DB_SQL[("🐘 PostgreSQL por Servicio")]
           end
-
-          Rabbit[(RabbitMQ Message Broker)]
       end
 
-      subgraph Ext [Integraciones Externas]
-          PGW[Pasarela de Pagos]
-          Email[Resend / Email API]
-          Grafana[Grafana Cloud]
-      end
-
-      %% Enrutamiento síncrono
-      Frontends -->|HTTPS| GW
-      GW --> ID & EM & SI & OR & PA & TI & AC & NO & RE
-
-      %% Caché y Concurrencia
-      SI <-->|Locks de Asientos| Redis
-      AC <-->|Estado de Códigos QR| Redis
-
-      %% Acceso a Datos
-      ID & EM & SI & OR & PA & TI & AC & NO -->|JDBC / JPA| DB_SQL
-      RE -->|Read Models| DB_NOSQL
-
-      %% Flujo Asíncrono de Eventos
-      SI & OR & PA & TI & AC & EM -->|Publicar Eventos de Dominio| Rabbit
-      Rabbit -->|Despachar Eventos| NO & RE & TI & SI & OR
-
-      %% Integraciones
-      PA --> PGW
-      NO --> Email
-      Core & Cross -.->|OpenTelemetry| Grafana
+      Clients -->|HTTPS| GW
+      GW --> Core
+      Core -->|Local TX Event Insert| Outbox
+      Outbox -->|Reliable Dispatch| Rabbit
+      Rabbit -->|Consumo Asíncrono Idempotente| Core
+      Core -->|JDBC / JPA| DB_SQL
 ---
 
-OrionTicket se concibió como un proyecto educativo de la universidad con el objetivo final de demostrar capacidades avanzadas en alta disponibilidad de bases de datos, resiliencia, alta concurrencia, observabilidad, el patrón CQRS y el uso de tecnologías como Redis, RabbitMQ, k6 y bases de datos NoSQL. Sin embargo, la meta primordial de esta arquitectura distribuida fue comprender a fondo cómo Kubernetes y la orquestación nativa de la nube resuelven los mayores desafíos operativos (escalado dinámico de pods, service discovery interno y auto-recuperación ante fallos del clúster) al desplegar una plataforma de venta de boletos a gran escala. Aún está en fase de desarrollo
+OrionTicket se concibió como un proyecto de equipo universitario orientado a construir una solución robusta y desacoplada para la venta y control de boletos en espectáculos masivos, resolviendo desafíos fundamentales de consistencia eventual, concurrencia y validación antifraude.
 
+El diseño del sistema aborda 9 bounded contexts estructurados bajo principios de Domain-Driven Design (DDD), coordinando el intercambio de estado asíncrono mediante el patrón Transactional Outbox y RabbitMQ. Para la validación presencial, se diseñó un protocolo de códigos QR dinámicos con vigencia temporal estricta (TTL de 2 minutos) y semántica first-scan-wins, impidiendo la duplicidad de accesos. Toda la solución se empaquetó para su orquestación distribuida mediante Docker Compose y Spring Cloud Gateway a través de múltiples entornos VPS.

@@ -12,28 +12,91 @@ import Footer from '../components/Footer.astro';
 const projects = await getCollection('projects');
 const sortedProjects = projects.sort((a, b) => a.data.order - b.data.order);
 
-// Tech lists
-const productionTech = [
-  "Java", "Spring Boot", "Angular", "Docker", "CI/CD (GitHub Actions)", 
-  "AWS", "PostgreSQL", "RabbitMQ", "Grafana Cloud", "Tailscale", 
-  "Python", "C++"
+// Decisiones de ingeniería
+const engineeringDecisions = [
+  {
+    id: "cost_vs_convenience",
+    title: "Costo operativo vs. comodidad (AWS Graviton + Serverless)",
+    rationale: "Evaluación de infraestructura considerando costo operativo real, consumo de RAM y disponibilidad regional frente a opciones PaaS/VPS. Se optó por una arquitectura serverless-first en Cloudflare Workers para el borde combinada con instancias mínimas AWS Graviton/ARM64 aprovisionadas mediante Terraform y sin IPv4 pública (conectividad IPv6), reduciendo drásticamente la factura cloud y la superficie de exposición."
+  },
+  {
+    id: "security_by_design",
+    title: "Seguridad por diseño (OIDC sin secretos estáticos y análisis Trivy)",
+    rationale: "Eliminación de credenciales estáticas de larga duración entre GitHub Actions y AWS mediante autenticación OIDC y roles IAM temporales. Integración obligatoria de Trivy en el pipeline para bloqueo de despliegues ante vulnerabilidades críticas (CVEs) en dependencias o capas de contenedores Docker."
+  },
+  {
+    id: "justified_complexity",
+    title: "Complejidad justificada (Evaluación deliberada de Redis y CQRS)",
+    rationale: "Evaluación técnica de patrones y herramientas según la necesidad real del sistema y no por tendencia. Se pospuso conscientemente la adopción de Redis al determinar que la concurrencia actual no justificaba la sobrecarga de mantenimiento de una capa de caché, aplicando la misma premisa al uso selectivo de CQRS."
+  },
+  {
+    id: "abstraction_depth",
+    title: "Profundidad en abstracciones (JPA/Hibernate y Spring Security)",
+    rationale: "Comprensión interna del comportamiento de los frameworks en lugar de tratarlos como cajas negras. Auditoría activa de consultas SQL generadas por Hibernate para prevenir problemas de N+1 queries y diseño detallado de la cadena de filtros de seguridad en Spring Security."
+  },
+  {
+    id: "evolutionary_architecture",
+    title: "Arquitectura evolutiva sobre sobreingeniería prematura",
+    rationale: "Diseño modular con arquitectura hexagonal y límites claros (DDD) que permite evolucionar y escalar componentes de forma independiente sin forzar al sistema desde el día cero a resolver problemas de escala que aún no existen."
+  }
 ];
 
-const studyingTech = [
-  "Kubernetes", "Terraform", "RabbitMQ", "Redis", "MongoDB", "GraphQL", 
-  "Event Sourcing/CQRS", "Saga Pattern", "Circuit Breaker", "OAuth2/OIDC", 
-  "Testcontainers", "Rust"
+// Áreas de especialidad técnica
+const stackAreas = [
+  {
+    name: "Desarrollo e infraestructura",
+    description: "Backend moderno, ecosistemas tipados y aprovisionamiento reproducible.",
+    items: [
+      "Java 21", "Spring Boot 4", "Spring Security", "TypeScript", 
+      "Angular 21 (Signals)", "React 19", "Arquitectura hexagonal", "REST APIs", 
+      "Docker (Multi-arch)", "Terraform", "CI/CD (GitHub Actions, OIDC)", 
+      "AWS (EC2 Graviton, ECR, S3, IAM, SSM)", "Cloudflare Workers", "OpenAPI"
+    ]
+  },
+  {
+    name: "Datos y persistencia",
+    description: "Motores relacionales, migraciones versionadas y patrones de resiliencia.",
+    items: [
+      "PostgreSQL", "Flyway", "JPA / Hibernate", "Supabase (Auth, RLS)", 
+      "Patroni", "etcd", "pgBouncer", "MongoDB"
+    ]
+  },
+  {
+    name: "Seguridad y observabilidad",
+    description: "Defensa en profundidad, autenticación efímera y telemetría distribuida.",
+    items: [
+      "Trivy (Vulnerability Scanning)", "JWT / OAuth2", "OIDC (Keyless Cloud)", 
+      "Grafana Cloud / Alloy", "Prometheus", "Loki", "Tempo", "Tailscale VPN"
+    ]
+  },
+  {
+    name: "Arquitectura y metodología",
+    description: "Diseño guiado por el dominio, comunicación desacoplada y disciplina ágil.",
+    items: [
+      "Domain-Driven Design (DDD)", "Arquitectura hexagonal", "ADR", 
+      "Scrum (Scrum Master)", "RabbitMQ (Transactional Outbox)", 
+      "Spring Cloud Gateway", "Git (Rebase, Worktrees)"
+    ]
+  },
+  {
+    name: "Cloud y sistemas",
+    description: "Administración de entornos Linux, redes privadas y computación eficiente.",
+    items: [
+      "Linux / Bash", "Nginx", "Let's Encrypt", "Cloudflare Tunnels", 
+      "AWS Graviton / ARM64", "VPS"
+    ]
+  }
 ];
 ---
 
-<Layout title="Alexander Canon | Software & Cloud Infrastructure Engineer">
+<Layout title="Alexander Canon | Software Engineer — Backend & Cloud">
   <Header />
   
   <main class="container">
     <!-- Hero Section -->
     <Hero />
 
-    <!-- Sobre Mí Section (Integrated as a concise professional profile segment) -->
+    <!-- Sobre Mí Section -->
     <section class="section about-section" id="sobre-mi">
       <div class="about-grid">
         <div class="about-label font-mono">
@@ -41,7 +104,7 @@ const studyingTech = [
         </div>
         <div class="about-content">
           <p>
-            Inicié mi trayectoria con enfoque en desarrollar software backend con Java y Spring Boot, pero mi rol ha evolucionado naturalmente hacia la administración de sistemas Linux, la automatización de flujos CI/CD con GitHub Actions, el diseño de infraestructura segura en la nube y la ciberseguridad. Me gusta aprender sobre gestión y optimización de entornos virtuales y de contenedores aplicando los mejores estándares técnicos.
+            Backend & Cloud Developer con experiencia práctica construyendo sistemas e infraestructura de punta a punta. He desarrollado pipelines de CI/CD seguros con GitHub Actions y autenticación OIDC hacia AWS, infraestructura como código con Terraform y arquitecturas serverless-first con Cloudflare Workers. También he diseñado arquitecturas hexagonales en Spring Boot 4, resuelto vulnerabilidades de seguridad en producción y gestionado despliegues sobre máquinas virtuales interconectadas mediante redes privadas con Tailscale.
           </p>
         </div>
       </div>
@@ -64,48 +127,52 @@ const studyingTech = [
       </div>
     </section>
 
+    <!-- Decisiones de Ingeniería Section -->
+    <section class="section decisions-section" id="decisiones">
+      <SectionHeading eyebrow="02. CRITERIO TÉCNICO" title="Decisiones de Ingeniería & Trade-offs" />
+      
+      <div class="decisions-grid">
+        {engineeringDecisions.map((decision, index) => (
+          <article class="decision-card">
+            <div class="decision-header">
+              <span class="decision-num font-mono">0{index + 1}.</span>
+              <h3 class="decision-title">{decision.title}</h3>
+            </div>
+            <p class="decision-rationale">{decision.rationale}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
     <!-- Stack Section -->
     <section class="section stack-section" id="stack">
-      <SectionHeading eyebrow="02. STACK" title="Tecnologías & Herramientas" />
+      <SectionHeading eyebrow="03. STACK" title="Tecnologías & Herramientas por Especialidad" />
       
       <div class="stack-grid">
-        <!-- Grupo: En producción -->
-        <div class="stack-group production-group">
-          <div class="group-header">
-            <span class="group-indicator solid"></span>
-            <h3 class="font-mono">EN PRODUCCIÓN</h3>
+        {stackAreas.map((area) => (
+          <div class="stack-group">
+            <div class="group-header">
+              <span class="group-indicator solid"></span>
+              <h3 class="font-mono">{area.name.toUpperCase()}</h3>
+            </div>
+            <p class="group-description">{area.description}</p>
+            <div class="badges-wrapper">
+              {area.items.map((tech) => (
+                <TechBadge name={tech} variant="solid" />
+              ))}
+            </div>
           </div>
-          <p class="group-description">Tecnologías e infraestructuras que he desplegado y utilizado en entornos reales o de testing avanzado.</p>
-          <div class="badges-wrapper">
-            {productionTech.map((tech) => (
-              <TechBadge name={tech} variant="solid" />
-            ))}
-          </div>
-        </div>
-
-        <!-- Grupo: En estudio activo -->
-        <div class="stack-group studying-group">
-          <div class="group-header">
-            <span class="group-indicator outline"></span>
-            <h3 class="font-mono">EN ESTUDIO ACTIVO</h3>
-          </div>
-          <p class="group-description">Patrones, arquitecturas y herramientas que investigo activamente para futuros proyectos complejos.</p>
-          <div class="badges-wrapper">
-            {studyingTech.map((tech) => (
-              <TechBadge name={tech} variant="outline" />
-            ))}
-          </div>
-        </div>
+        ))}
       </div>
     </section>
 
     <!-- Contacto Section -->
     <section class="section contact-section" id="contacto">
       <div class="contact-box">
-        <span class="contact-eyebrow font-mono">03. CONTACTO</span>
+        <span class="contact-eyebrow font-mono">04. CONTACTO</span>
         <h2 class="contact-title">¿Trabajamos en equipo?</h2>
         <p class="contact-text">
-          Estoy en disposición para trabajar en proyectos personales, open source o profesionales. Si usted tiene una idea, un proyecto o simplemente necesite intercambiar temas sobre tecnología, noticias recientes de inteligencia artificial será un gusto contactarle.
+          Estoy en disposición para colaborar en oportunidades profesionales, proyectos de ingeniería o desarrollo backend y cloud. Si tienes un reto técnico, un proyecto o deseas intercambiar ideas sobre arquitectura de software, será un gusto conversar.
         </p>
         
         <div class="contact-details font-mono">
@@ -166,8 +233,62 @@ const studyingTech = [
 
   .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.5rem;
+  }
+
+  /* Decisions Section Styles */
+  .decisions-section {
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .decisions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .decision-card {
+    background-color: rgba(24, 24, 27, 0.4);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    transition: border-color var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .decision-card:hover {
+    border-color: var(--border);
+    transform: translateY(-2px);
+  }
+
+  .decision-header {
+    margin-bottom: 1rem;
+  }
+
+  .decision-num {
+    font-size: 0.75rem;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .decision-title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  .decision-rationale {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
   }
 
   /* Stack Section Styles */
@@ -177,15 +298,15 @@ const studyingTech = [
 
   .stack-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
   }
 
   .stack-group {
     background-color: rgba(24, 24, 27, 0.4);
     border: 1px solid var(--border-subtle);
     border-radius: 6px;
-    padding: 2.5rem;
+    padding: 2rem;
     transition: border-color var(--transition-fast);
   }
 
@@ -197,11 +318,11 @@ const studyingTech = [
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
   }
 
   .group-header h3 {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.05em;
   }
@@ -217,22 +338,17 @@ const studyingTech = [
     box-shadow: 0 0 8px var(--accent);
   }
 
-  .group-indicator.outline {
-    background-color: transparent;
-    border: 1.5px solid var(--text-muted);
-  }
-
   .group-description {
     font-size: var(--fs-small);
     color: var(--text-muted);
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     line-height: 1.5;
   }
 
   .badges-wrapper {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.625rem;
+    gap: 0.5rem;
   }
 
   /* Contact Section Styles */
@@ -325,13 +441,15 @@ const studyingTech = [
       gap: 1rem;
     }
     
-    .stack-grid {
+    .stack-grid,
+    .decisions-grid {
       grid-template-columns: 1fr;
-      gap: 1.5rem;
+      gap: 1.25rem;
     }
     
-    .stack-group {
-      padding: 1.75rem;
+    .stack-group,
+    .decision-card {
+      padding: 1.5rem;
     }
 
     .contact-box {
